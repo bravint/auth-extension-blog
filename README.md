@@ -29,7 +29,7 @@ This extension requires completion of the [blog-domain-challenge-2](https://gith
 2. Add a login route
     1. The route should accept both combinations of username and password OR email and password.
     2. Verify the credentials are correct and send back an error if not.
-    2. If the credentials are correct, create a JSON Web Token using the users ID and username as its payload.
+    2. If the credentials are correct, create a JSON Web Token using the users ID and username as its payload. Do not commit the secret key you use to create the token; this should be placed in the `.env` file.
     3. Send the token in the response.
 
 3. Now that you have a way to log users in, change your post **and** comment create, update and delete routes to only work if a valid JWT is provided in an `authorization` header:
