@@ -27,7 +27,7 @@ This extension requires completion of the [blog-domain-challenge-2](https://gith
     2. Not include the password in the API response.
 
 2. Add a login route
-    1. The route should accept the combination of either username and password OR email and password.
+    1. The route should accept both combinations of username and password OR email and password.
     2. Verify the credentials are correct and send back an error if not.
     2. If the credentials are correct, create a JSON Web Token using the users ID and username as its payload.
     3. Send the token in the response.
