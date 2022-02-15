@@ -1,6 +1,6 @@
 # Authentication Extension: Blog Domain
 
-This extension requires completion of the [blog-domain-challenge-2](https://github.com/boolean-uk/blog-domain-challenge-2) repo of the API module.
+This extension requires completion of the [blog-domain-challenge-2](https://github.com/boolean-uk/blog-domain-challenge-2) repo (up to requirement 8) of the API module.
 
 ## Set up
 
