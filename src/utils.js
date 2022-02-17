@@ -7,7 +7,11 @@ const idToInteger =  (params) => {
     return parseInt(id, 10) 
 };
 
+const saltRounds = 10;
+
 module.exports = {
     idToInteger,
-    prisma
+    prisma,
+    saltRounds,
+    secret
 };

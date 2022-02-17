@@ -1,10 +1,58 @@
-const { idToInteger, prisma } = require('../utils');
+const { idToInteger, prisma, saltRounds} = require('../utils');
+
+const jwt = require('jsonwebtoken');
+
+const bcrypt = require('bcrypt');
+
+const secret = process.env.SECRET
+
+const hashedPassword = (password) => bcrypt.hashSync(password, saltRounds);
+
+const createToken = (payload) => jwt.sign(payload, secret);
+
+const checkPassword = async (textPassword, hashedPassword) => {
+    try {
+        return await bcrypt.compare(textPassword, hashedPassword);
+    } catch (error) {
+        console.log(`error in password check`, error);
+        return error;
+    }
+};
+
+const checkToken = (token) => jwt.verify(token, secret)
+
+const authUser = async (req, res) => {
+    const { username, password } = req.body;
+
+    const foundUser = await prisma.user.findUnique({
+        where: {
+            username,
+        },
+    });
+
+    if (!foundUser) return res.status(401).json('No user found');
+
+    const checkedPassword = checkPassword(password, foundUser.password);
+
+    if (!checkedPassword) return res.status(401).json('User authentication failed');
+
+    const payload = {
+        username, 
+        id: foundUser.id,
+    }
+
+    console.log(`payload`, payload)
+
+    const token = createToken(payload, secret)
+
+    res.status(201).json(token)
+};
 
 const createUser = async (req, res) => {
     const user = generateUser(req.body);
     const profile = generateProfile(req.body);
 
-    const createdUser = await prisma.user.create({
+    let createdUser = await prisma.user.create({
         data: {
             ...user,
             profile: {
@@ -17,6 +65,8 @@ const createUser = async (req, res) => {
             profile: true,
         },
     });
+
+    delete createdUser.password;
 
     return res.json(createdUser);
 };
@@ -65,13 +115,17 @@ const updateProfile = async (req, res) => {
 };
 
 const generateUser = (requestBody) => {
-    const { username, email, password } = requestBody;
+    let { username, email, password } = requestBody;
 
-    let user = {}
+    let user = {};
 
-    if (username) user = { ...user, username}
-    if (password) user = { ...user, password}
-    if (email) user = { ...user, email}
+    if (username) user = { ...user, username };
+    if (password) {
+        password = hashedPassword(password);
+        user = { ...user, password };
+    }
+
+    if (email) user = { ...user, email };
 
     return user;
 };
@@ -83,13 +137,15 @@ const generateProfile = (requestBody) => {
 
     if (firstName) profile = { ...profile, firstName };
     if (lastName) profile = { ...profile, lastName };
-    if (firstName) age = { ...profile, age };
-    if (firstName) pictureUrl = { ...profile, pictureUrl };
+    if (firstName) profile = { ...profile, age };
+    if (firstName) profile = { ...profile, pictureUrl };
 
     return profile;
 };
 
 const deleteUser = async (req, res) => {
+    const token = req.headers.authorization
+
     const id = idToInteger(req.params);
 
     const deletedUser = await prisma.user.delete({
@@ -102,6 +158,7 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
+    authUser,
     createUser,
     updateUser,
     updateProfile,

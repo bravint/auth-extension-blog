@@ -22,13 +22,15 @@
   "homepage": "https://github.com/bravint/blog-domain-challenge-2#readme",
   "devDependencies": {
     "nodemon": "^2.0.15",
-    "prisma": "^3.9.1"
+    "prisma": "^3.9.2"
   },
   "dependencies": {
-    "@prisma/client": "^3.9.1",
+    "@prisma/client": "^3.9.2",
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
+    "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0"
   }
 }

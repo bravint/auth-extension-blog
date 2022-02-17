@@ -1,5 +1,9 @@
 require('dotenv').config();
 
+if (!process.env.SECRET) {
+    return console.log(' JWT secret not found, server will not start')
+}
+
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');

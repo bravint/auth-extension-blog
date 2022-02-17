@@ -47,6 +47,8 @@ const getPostByUser = async (req, res) => {
 };
 
 const createPost = async (req, res) => {
+    console.log('creating post')
+
     const { categories, userId } = req.body;
 
     const post = generatePost(req.body);
