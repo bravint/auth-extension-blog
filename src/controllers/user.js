@@ -1,10 +1,8 @@
-const { idToInteger, prisma, saltRounds} = require('../utils');
+const { idToInteger, prisma, saltRounds, secret } = require('../utils');
 
 const jwt = require('jsonwebtoken');
 
 const bcrypt = require('bcrypt');
-
-const secret = process.env.SECRET
 
 const hashedPassword = (password) => bcrypt.hashSync(password, saltRounds);
 
@@ -18,8 +16,6 @@ const checkPassword = async (textPassword, hashedPassword) => {
         return error;
     }
 };
-
-const checkToken = (token) => jwt.verify(token, secret)
 
 const authUser = async (req, res) => {
     const { username, password } = req.body;
@@ -37,15 +33,13 @@ const authUser = async (req, res) => {
     if (!checkedPassword) return res.status(401).json('User authentication failed');
 
     const payload = {
-        username, 
+        username,
         id: foundUser.id,
-    }
+    };
 
-    console.log(`payload`, payload)
+    const token = createToken(payload, secret);
 
-    const token = createToken(payload, secret)
-
-    res.status(201).json(token)
+    res.status(201).json(token);
 };
 
 const createUser = async (req, res) => {
@@ -120,6 +114,7 @@ const generateUser = (requestBody) => {
     let user = {};
 
     if (username) user = { ...user, username };
+
     if (password) {
         password = hashedPassword(password);
         user = { ...user, password };
@@ -144,7 +139,7 @@ const generateProfile = (requestBody) => {
 };
 
 const deleteUser = async (req, res) => {
-    const token = req.headers.authorization
+    const token = req.headers.authorization;
 
     const id = idToInteger(req.params);
 

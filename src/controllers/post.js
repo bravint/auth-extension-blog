@@ -47,8 +47,6 @@ const getPostByUser = async (req, res) => {
 };
 
 const createPost = async (req, res) => {
-    console.log('creating post')
-
     const { categories, userId } = req.body;
 
     const post = generatePost(req.body);
@@ -270,7 +268,7 @@ const handleDeleteComment = async (req, res) => {
     let parentId;
 
     if (targetComment) parentId = targetComment.parentId;
-    if (!targetComment) return res.status(404).send('comment not found');
+    if (!targetComment) return res.status(404).json('comment not found');
 
     let deletedComment;
 
@@ -280,7 +278,7 @@ const handleDeleteComment = async (req, res) => {
         deletedComment = await deleteParentComment(id);
     }
 
-    res.json(deletedComment);
+    res.status(200).json(deletedComment);
 };
 
 const deleteComment = async (id) => {

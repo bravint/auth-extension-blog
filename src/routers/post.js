@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const jwt = require('jsonwebtoken');
+const { checkToken } = require('../utils');
 
 const {
     getPost,
@@ -17,21 +17,13 @@ const {
 } = require('../controllers/post');
 
 function checkPermission(req, res, next) {
-    console.log('in checkPermission')
-
     const token = req.headers.authorization;
 
-    if (!token) res.status(401).json('user not logged in');
-
-    const secret = process.env.SECRET;
-
-    const checkToken = (token) => jwt.verify(token, secret);
+    if (!token) return res.status(401).json('user not logged in');
 
     const check = checkToken(token);
 
     if (!check) return res.status(401).json('user not logged in');
-
-    console.log('checkPermission OK, calling next()')
 
     next();
 }

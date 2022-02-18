@@ -1,17 +1,24 @@
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const jwt = require('jsonwebtoken');
 
-const idToInteger =  (params) => {
+const checkToken = (token) => jwt.verify(token, secret);
+
+const idToInteger = (params) => {
     let { id } = params;
 
-    return parseInt(id, 10) 
+    return parseInt(id, 10);
 };
+
+const prisma = new PrismaClient();
 
 const saltRounds = 10;
 
+const secret = process.env.SECRET;
+
 module.exports = {
+    checkToken,
     idToInteger,
     prisma,
     saltRounds,
-    secret
+    secret,
 };
